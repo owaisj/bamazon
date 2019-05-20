@@ -6,5 +6,6 @@ CREATE TABLE products(
     product_name VARCHAR(100) NOT NULL,
     department_name VARCHAR(45) NOT NULL,
     price DECIMAL (5,2) default 0,
-    stock_quantity INT default 1
+    stock_quantity INT default 1,
+    PRIMARY KEY (item_id)
 );
