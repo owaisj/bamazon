@@ -24,13 +24,19 @@ function checkout() {
     ]).then(function(response){
         let userQuantity = response.quantity;
         let userChoice = response.id;
-        console.log('You want', userQuantity, 'of item', userChoice);
+        console.log(`You want ${userQuantity} of item no. ${userChoice}.`);
         connection.query(
             `SELECT * FROM products WHERE item_id=${userChoice}`,
             function(error, response) {
                 if (error) throw error;
-                //console.table(response[0]['stock_quantity']);
-                //TODO: Check if there is enough in stock
+
+                if (userQuantity > response[0]['stock_quantity']) {
+                    console.log(`Unfortunately we don't have enough. Please come again.`);
+                    return connection.end();
+                }
+
+                let total = response[0]['price']*userQuantity;
+                console.log(`Your total was $${total}.`);
                 let newQuantity = response[0]['stock_quantity'] - userQuantity;
                 connection.query(
                     `UPDATE products SET ? WHERE ?`,
