@@ -4,3 +4,5 @@ A command-line, Amazon-like storefront. Functionally similar to [cliBay](https:/
 - Node.js
     - Inquirer.js
 - MySQL
+## Customer View
+## Manager View
