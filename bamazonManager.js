@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-function manage() {
+(function manage() {
     inquirer.prompt([
         {
             type: 'list',
@@ -23,16 +23,31 @@ function manage() {
             ]
         }
     ]).then(function(response){
-        console.log(response);
+        switch (response.operation) {
+            case 'View Products for Sale':
+                viewProducts();
+                break;
+            case 'View Low Inventory':
+                console.log('View Low Inventory');
+                break;
+            case 'Add to Inventory':
+                console.log('Add to Inventory');
+                break;
+            case 'Add New Product':
+                console.log('Add New Product');
+                break;
+            default: console.log('Thanks for using the Bamazon Management Suite.');
+        }
     }).catch();
-}
+})();
 
-connection.query(
-    'SELECT * FROM products',
-    function(error, response){
-        if (error) throw error;
-        console.table(response);
-        manage();
-        connection.end();
-    }
-)
+function viewProducts() {
+    connection.query(
+        'SELECT * FROM products',
+        function(error, response){
+            if (error) throw error;
+            console.table(response);
+            connection.end();
+        }
+    )
+};
