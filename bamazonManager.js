@@ -28,7 +28,7 @@ const connection = mysql.createConnection({
                 viewProducts();
                 break;
             case 'View Low Inventory':
-                console.log('View Low Inventory');
+                viewLow();
                 break;
             case 'Add to Inventory':
                 console.log('Add to Inventory');
@@ -51,3 +51,14 @@ function viewProducts() {
         }
     )
 };
+
+function viewLow() {
+    connection.query(
+        'SELECT * FROM products WHERE stock_quantity < 15',
+        function(error, response){
+            if (error) throw error;
+            console.table(response);
+            connection.end();
+        }
+    )
+}
