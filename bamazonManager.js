@@ -9,6 +9,8 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
+//TODO: Write out catch blocks
+//TODO: Validation functions
 (function manage() {
     inquirer.prompt([
         {
@@ -34,7 +36,7 @@ const connection = mysql.createConnection({
                 addInventory();
                 break;
             case 'Add New Product':
-                console.log('Add New Product');
+                addNewItem();
                 break;
             default: console.log('Thanks for using the Bamazon Management Suite.');
         }
@@ -67,6 +69,7 @@ function addInventory() {
     connection.query(
         'SELECT * FROM products',
         function(error, response){
+            if (error) throw error;
             console.table(response);
             inquirer.prompt([
                 {
@@ -80,9 +83,6 @@ function addInventory() {
                     message: 'How many would you like to add?'
                 }
             ]).then(function(response){
-                console.log(response.id);
-                console.log(response.quantity);
-
                 connection.query(
                     `UPDATE products SET stock_quantity = (stock_quantity + ${response.quantity}) WHERE item_id=${response.id}`,
                     function(error, response) {
@@ -95,9 +95,43 @@ function addInventory() {
                             }
                         );
                     }
-                );
-                
+                ); 
             }).catch();
         }
     );
+}
+
+function addNewItem() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'pname',
+            message: 'What would you like to add?'
+        },
+        {
+            type: 'input',
+            name: 'dname',
+            message: 'What department does this belong in?'
+        },
+        {
+            type: 'number',
+            name: 'price',
+            message: 'How much does it cost?'
+        },
+        {
+            type: 'number',
+            name: 'quantity',
+            message: 'How much do we have available to sell?'
+        }
+    ]).then(function(newproduct){
+        console.table(newproduct);
+        connection.query(
+            `INSERT INTO products (product_name, department_name, price, stock_quantity) 
+            VALUES ('${newproduct.pname}', '${newproduct.dname}', ${newproduct.price}, ${newproduct.quantity})`,
+            function(error, response) {
+                if (error) throw error;
+                connection.end();
+            }
+        );
+    }).catch();
 }
