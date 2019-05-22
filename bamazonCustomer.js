@@ -36,18 +36,13 @@ function checkout() {
                 }
 
                 let total = response[0]['price']*userQuantity;
-                console.log(`Your total was $${total}.`);
+                let sales = response[0]['product_sales'] + total;
                 let newQuantity = response[0]['stock_quantity'] - userQuantity;
+                console.log(`Your total was $${total}.`);
                 connection.query(
-                    `UPDATE products SET ? WHERE ?`,
-                    [
-                        {
-                            stock_quantity: newQuantity
-                        },
-                        {
-                            item_id: userChoice
-                        }
-                    ],
+                    `UPDATE products 
+                    SET stock_quantity=${newQuantity}, product_sales=${sales} 
+                    WHERE item_id=${userChoice}`,
                     function(error, response) {
                         if (error) throw error;
                         console.log('Thanks for your purchase!');
