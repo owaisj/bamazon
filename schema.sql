@@ -17,4 +17,4 @@ CREATE TABLE departments (
     PRIMARY KEY (department_id)
 );
 
-ALTER TABLE products ADD product_sales DECIMAL (5,2);
+ALTER TABLE products ADD product_sales DECIMAL (5,2) NOT NULL default 0;
