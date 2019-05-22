@@ -15,4 +15,6 @@ CREATE TABLE departments (
     department_name VARCHAR (45) NOT NULL,
     over_head_costs DECIMAL (5,2) default 0,
     PRIMARY KEY (department_id)
-)
+);
+
+ALTER TABLE products ADD product_sales DECIMAL (5,2);
