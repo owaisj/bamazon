@@ -27,17 +27,17 @@ const connection = mysql.createConnection({
     ]).then(function(response){
         switch (response.operation) {
             case 'View Products for Sale':
-                viewProducts();
-                break;
+            return viewProducts();
+            
             case 'View Low Inventory':
-                viewLow();
-                break;
+            return viewLow();
+
             case 'Add to Inventory':
-                addInventory();
-                break;
+            return addInventory();
+            
             case 'Add New Product':
-                addNewItem();
-                break;
+            return addNewItem();
+            
             default: console.log('Thanks for using the Bamazon Management Suite.');
         }
     }).catch();
