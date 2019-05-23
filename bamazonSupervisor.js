@@ -9,16 +9,15 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-(function supervise(){
-    inquirer.prompt().then().catch();
+// (function supervise(){
+//     inquirer.prompt().then().catch();
 
-})();
+// })();
 
-//TODO: Add a department, overhead costs is a dummy number
-//TODO: Test with Books and Health
 function newDepartment() {
     connection.query(
-        ``,
+        `INSERT INTO departments (department_name, over_head_costs)
+        VALUES ('Books', 100)`,
         function (error, response) {
             if (error) throw error;
         }
@@ -28,10 +27,13 @@ function newDepartment() {
 //TODO: Take product_sales from products
 function viewSales() {
     connection.query(
-        ``,
+        `SELECT * FROM departments`,
         function (error, response) {
             if (error) throw error;
+            console.table(response);
+            connection.end();
         }
     );
 };
 
+viewSales();
