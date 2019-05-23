@@ -24,10 +24,15 @@ function newDepartment() {
     )
 };
 
-//TODO: Take product_sales from products
 function viewSales() {
     connection.query(
-        `SELECT * FROM departments`,
+        `SELECT departments.department_id, departments.department_name, departments.over_head_costs,
+        COALESCE(SUM(products.product_sales), 0) AS product_sales,
+        COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
+        FROM departments
+        LEFT JOIN products
+        ON departments.department_name = products.department_name 
+        `,
         function (error, response) {
             if (error) throw error;
             console.table(response);
