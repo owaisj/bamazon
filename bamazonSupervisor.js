@@ -25,7 +25,7 @@ const connection = mysql.createConnection({
     ]).then(r => {
         switch (r.operation) {
             case 'Create a new department':
-                return console.log('A new inquiry will go here.');
+                return newDepartment();
             case 'View total sales':
                 return viewSales();
             default: console.log('Thank you for using the Bamazon Supervising Suite');
@@ -34,19 +34,36 @@ const connection = mysql.createConnection({
 
 })();
 
-//Create new department x with overhead costs y
-function newDepartment(x, y) {
-    //TODO: New inquirer prompt, return query as part of promise
-    inquirer.prompt().then().catch();
-    
-    connection.query(
-        `INSERT INTO departments (department_name, over_head_costs)
-        VALUES ('${x}', ${y})`,
-        function (error, response) {
-            if (error) throw error;
-            console.table(response);
+//Create new department
+function newDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'dname',
+            message: 'What department are you adding?'
+        },
+        {
+            type: 'number',
+            name: 'ohc',
+            message: 'What are its overhead costs?'
         }
-    )
+    ]).then(r => {
+        connection.query(
+            `INSERT INTO departments (department_name, over_head_costs)
+            VALUES ('${r.dname}', ${r.ohc})`,
+            function (error, response) {
+                if (error) throw error;
+                connection.query(
+                    `SELECT * FROM departments`,
+                    function(error, response) {
+                        if(error) throw error;
+                        console.table(response);
+                        connection.end();
+                    }
+                )
+            }
+        )
+    }).catch();
 };
 
 //TODO: Allow user to choose an individual department to view.
