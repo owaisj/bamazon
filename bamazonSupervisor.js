@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-//TODO: Inquire user on what action they'd like to conduct
+//IIFE - Allow the user to immediately supervise
 (function supervise(){
     inquirer.prompt([
         {
@@ -18,7 +18,7 @@ const connection = mysql.createConnection({
             message: 'What would you like to do?',
             choices: [
                 'Create a new department',
-                'View total sales', //TODO: By department
+                'View total sales',
                 'Exit'
             ]
         }
@@ -66,7 +66,7 @@ function newDepartment() {
     }).catch();
 };
 
-//TODO: Allow user to choose an individual department to view.
+//View a summarized table of all sales by department
 function viewSales() {
     connection.query(
         `SELECT departments.department_id, departments.department_name, departments.over_head_costs,
