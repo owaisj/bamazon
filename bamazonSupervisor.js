@@ -1,5 +1,6 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -30,7 +31,7 @@ const connection = mysql.createConnection({
                 return viewSales();
             default: console.log('Thank you for using the Bamazon Supervising Suite');
         }
-    }).catch();
+    })
 
 })();
 
@@ -57,29 +58,62 @@ function newDepartment() {
                     `SELECT * FROM departments`,
                     function(error, response) {
                         if(error) throw error;
-                        console.table(response);
+                        drawTable(response);
                         connection.end();
                     }
                 )
             }
         )
-    }).catch();
+    })
 };
 
 //View a summarized table of all sales by department
 function viewSales() {
     connection.query(
         `SELECT departments.department_id, departments.department_name, departments.over_head_costs,
-        COALESCE(SUM(products.product_sales), 0) AS product_sales,
-        COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
+            COALESCE(SUM(products.product_sales), 0) AS product_sales,
+            COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
         FROM departments
         LEFT JOIN products
-        ON departments.department_name = products.department_name 
+        ON departments.department_name = products.department_name
+        GROUP BY departments.department_id
+        ORDER BY total_profit DESC
         `,
         function (error, response) {
             if (error) throw error;
-            console.table(response);
+            let table = new Table({
+                style: {
+                    head: ['green']
+                },
+                head: ['Department ID', 'Department Name', 'Overhead Costs', 'Product Sales', 'Total Profit']
+            })
+            for (let i in response) {
+                let rowValues = [];
+                Object.keys(response[i]).forEach(item => {
+                    rowValues.push(response[i][item]);
+                });
+                table.push(rowValues);
+            }
+            console.log(table.toString());
             connection.end();
         }
     );
 };
+
+let drawTable = function(obj) {
+    let table = new Table({
+        style: {
+            head: ['green']
+        },
+        head: ['Department ID', 'Department Name', 'Overhead Costs']
+    })
+
+    for (let i in obj) {
+        let rowValues = [];
+        Object.keys(obj[i]).forEach(item => {
+            rowValues.push(obj[i][item]);
+        });
+        table.push(rowValues);
+    }
+    console.log(table.toString());
+}

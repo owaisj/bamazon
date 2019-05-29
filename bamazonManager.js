@@ -1,5 +1,6 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -9,7 +10,6 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-//TODO: Write out catch blocks
 //TODO: Validation functions
 (function manage() {
     inquirer.prompt([
@@ -40,7 +40,7 @@ const connection = mysql.createConnection({
             
             default: console.log('Thanks for using the Bamazon Management Suite.');
         }
-    }).catch();
+    })
 })();
 
 function viewProducts() {
@@ -48,7 +48,7 @@ function viewProducts() {
         'SELECT * FROM products',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             connection.end();
         }
     )
@@ -59,7 +59,7 @@ function viewLow() {
         'SELECT * FROM products WHERE stock_quantity < 15',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             connection.end();
         }
     )
@@ -70,7 +70,7 @@ function addInventory() {
         'SELECT * FROM products',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             inquirer.prompt([
                 {
                     type: 'number',
@@ -90,13 +90,13 @@ function addInventory() {
                         connection.query(`SELECT * FROM products`, 
                             function(error, response) {
                                 if (error) throw error;
-                                console.table(response);
+                                drawTable(response);
                                 connection.end();
                             }
                         );
                     }
                 ); 
-            }).catch();
+            })
         }
     );
 }
@@ -124,14 +124,42 @@ function addNewItem() {
             message: 'How much do we have available to sell?'
         }
     ]).then(function(newproduct){
-        console.table(newproduct);
+        let newItemTable = new Table({
+            style: {
+                head: ['green']
+            },
+            head: ['Product Name', 'Department Name', 'Price', 'Stock']
+        });
+        let newItemRow = [];
+        Object.keys(newproduct).forEach(item => {
+            newItemRow.push(newproduct[item]);
+        });
+        newItemTable.push(newItemRow);
+        console.log(`You are adding the following to the inventory:\n${newItemTable}`)
         connection.query(
             `INSERT INTO products (product_name, department_name, price, stock_quantity) 
-            VALUES ('${newproduct.pname}', '${newproduct.dname}', ${newproduct.price}, ${newproduct.quantity})`,
+            VALUES ("${newproduct.pname}", "${newproduct.dname}", ${newproduct.price}, ${newproduct.quantity})`,
             function(error, response) {
                 if (error) throw error;
                 connection.end();
             }
         );
-    }).catch();
+    })
+}
+
+let drawTable = function(obj) {
+    const table = new Table({
+        style: {
+            head: ['green']
+        },
+        head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock', 'Product Sales']
+    });
+    for (let i in obj) {
+        let rowValues = [];
+        Object.keys(obj[i]).forEach(item => {
+            rowValues.push(obj[i][item]);
+        });
+        table.push(rowValues);
+    }
+    console.log(table.toString());
 }
