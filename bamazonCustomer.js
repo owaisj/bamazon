@@ -1,5 +1,6 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -58,7 +59,20 @@ connection.query(
     'SELECT * FROM products',
     function(error, response){
         if (error) throw error;
-        console.table(response);
+        //Create new instance of Table
+        const table = new Table({
+            head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock', 'Product Sales']
+        });
+        //Loop through response object, create array of values and push to table array
+        for (let index in response) {
+            let rowValues = [];
+            Object.keys(response[index]).forEach(item => {
+                rowValues.push(response[index][item]);
+            });
+            table.push(rowValues);
+        }
+        console.log(table.toString());
         checkout();
+        connection.end();
     }
 )
