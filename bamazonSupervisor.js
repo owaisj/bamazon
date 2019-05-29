@@ -31,7 +31,7 @@ const connection = mysql.createConnection({
                 return viewSales();
             default: console.log('Thank you for using the Bamazon Supervising Suite');
         }
-    }).catch();
+    })
 
 })();
 
@@ -81,8 +81,20 @@ function viewSales() {
         `,
         function (error, response) {
             if (error) throw error;
-            //TODO: cli-table
-            console.table(response);
+            let table = new Table({
+                style: {
+                    head: ['green']
+                },
+                head: ['Department ID', 'Department Name', 'Overhead Costs', 'Product Sales', 'Total Profit']
+            })
+            for (let i in response) {
+                let rowValues = [];
+                Object.keys(response[i]).forEach(item => {
+                    rowValues.push(response[i][item]);
+                });
+                table.push(rowValues);
+            }
+            console.log(table.toString());
             connection.end();
         }
     );
