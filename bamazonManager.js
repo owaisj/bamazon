@@ -1,5 +1,6 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -9,7 +10,7 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-//TODO: Write out catch blocks
+//TODO: Remove catch blocks
 //TODO: Validation functions
 (function manage() {
     inquirer.prompt([
@@ -48,7 +49,7 @@ function viewProducts() {
         'SELECT * FROM products',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             connection.end();
         }
     )
@@ -59,7 +60,7 @@ function viewLow() {
         'SELECT * FROM products WHERE stock_quantity < 15',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             connection.end();
         }
     )
@@ -70,7 +71,7 @@ function addInventory() {
         'SELECT * FROM products',
         function(error, response){
             if (error) throw error;
-            console.table(response);
+            drawTable(response);
             inquirer.prompt([
                 {
                     type: 'number',
@@ -90,7 +91,7 @@ function addInventory() {
                         connection.query(`SELECT * FROM products`, 
                             function(error, response) {
                                 if (error) throw error;
-                                console.table(response);
+                                drawTable(response);
                                 connection.end();
                             }
                         );
@@ -124,6 +125,7 @@ function addNewItem() {
             message: 'How much do we have available to sell?'
         }
     ]).then(function(newproduct){
+        //TODO: cli-table instance
         console.table(newproduct);
         connection.query(
             `INSERT INTO products (product_name, department_name, price, stock_quantity) 
@@ -134,4 +136,21 @@ function addNewItem() {
             }
         );
     }).catch();
+}
+
+let drawTable = function(obj) {
+    const table = new Table({
+        style: {
+            head: ['green']
+        },
+        head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock', 'Product Sales']
+    });
+    for (let i in obj) {
+        let rowValues = [];
+        Object.keys(obj[i]).forEach(item => {
+            rowValues.push(obj[i][item]);
+        });
+        table.push(rowValues);
+    }
+    console.log(table.toString());
 }
