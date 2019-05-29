@@ -9,6 +9,7 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
+//TODO: cli-table
 //IIFE - Allow the user to immediately supervise
 (function supervise(){
     inquirer.prompt([
@@ -63,18 +64,20 @@ function newDepartment() {
                 )
             }
         )
-    }).catch();
+    })
 };
 
 //View a summarized table of all sales by department
 function viewSales() {
     connection.query(
         `SELECT departments.department_id, departments.department_name, departments.over_head_costs,
-        COALESCE(SUM(products.product_sales), 0) AS product_sales,
-        COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
+            COALESCE(SUM(products.product_sales), 0) AS product_sales,
+            COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
         FROM departments
         LEFT JOIN products
-        ON departments.department_name = products.department_name 
+        ON departments.department_name = products.department_name
+        GROUP BY departments.department_id
+        ORDER BY total_profit DESC
         `,
         function (error, response) {
             if (error) throw error;
