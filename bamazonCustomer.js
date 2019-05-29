@@ -73,6 +73,5 @@ connection.query(
         }
         console.log(table.toString());
         checkout();
-        connection.end();
     }
 )
