@@ -10,7 +10,6 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-//TODO: Remove catch blocks
 //TODO: Validation functions
 (function manage() {
     inquirer.prompt([
@@ -41,7 +40,7 @@ const connection = mysql.createConnection({
             
             default: console.log('Thanks for using the Bamazon Management Suite.');
         }
-    }).catch();
+    })
 })();
 
 function viewProducts() {
@@ -97,7 +96,7 @@ function addInventory() {
                         );
                     }
                 ); 
-            }).catch();
+            })
         }
     );
 }
@@ -125,17 +124,27 @@ function addNewItem() {
             message: 'How much do we have available to sell?'
         }
     ]).then(function(newproduct){
-        //TODO: cli-table instance
-        console.table(newproduct);
+        let newItemTable = new Table({
+            style: {
+                head: ['green']
+            },
+            head: ['Product Name', 'Department Name', 'Price', 'Stock']
+        });
+        let newItemRow = [];
+        Object.keys(newproduct).forEach(item => {
+            newItemRow.push(newproduct[item]);
+        });
+        newItemTable.push(newItemRow);
+        console.log(`You are adding the following to the inventory:\n${newItemTable}`)
         connection.query(
             `INSERT INTO products (product_name, department_name, price, stock_quantity) 
-            VALUES ('${newproduct.pname}', '${newproduct.dname}', ${newproduct.price}, ${newproduct.quantity})`,
+            VALUES ("${newproduct.pname}", "${newproduct.dname}", ${newproduct.price}, ${newproduct.quantity})`,
             function(error, response) {
                 if (error) throw error;
                 connection.end();
             }
         );
-    }).catch();
+    })
 }
 
 let drawTable = function(obj) {
