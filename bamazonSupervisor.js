@@ -1,5 +1,6 @@
 require('dotenv').config();
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -9,7 +10,6 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-//TODO: cli-table
 //IIFE - Allow the user to immediately supervise
 (function supervise(){
     inquirer.prompt([
@@ -58,7 +58,7 @@ function newDepartment() {
                     `SELECT * FROM departments`,
                     function(error, response) {
                         if(error) throw error;
-                        console.table(response);
+                        drawTable(response);
                         connection.end();
                     }
                 )
@@ -81,8 +81,27 @@ function viewSales() {
         `,
         function (error, response) {
             if (error) throw error;
+            //TODO: cli-table
             console.table(response);
             connection.end();
         }
     );
 };
+
+let drawTable = function(obj) {
+    let table = new Table({
+        style: {
+            head: ['green']
+        },
+        head: ['Department ID', 'Department Name', 'Overhead Costs']
+    })
+
+    for (let i in obj) {
+        let rowValues = [];
+        Object.keys(obj[i]).forEach(item => {
+            rowValues.push(obj[i][item]);
+        });
+        table.push(rowValues);
+    }
+    console.log(table.toString());
+}
