@@ -39,7 +39,7 @@ function checkout() {
                 let total = response[0]['price']*userQuantity;
                 let sales = response[0]['product_sales'] + total;
                 let newQuantity = response[0]['stock_quantity'] - userQuantity;
-                console.log(`Your total was $${total}.`);
+                console.log(`Your total was $${total.toFixed(2)}.`);
                 connection.query(
                     `UPDATE products 
                     SET stock_quantity=${newQuantity}, product_sales=${sales} 
@@ -52,7 +52,7 @@ function checkout() {
                 )
             }
         )
-    }).catch();
+    })
 }
 
 connection.query(
@@ -61,13 +61,16 @@ connection.query(
         if (error) throw error;
         //Create new instance of Table
         const table = new Table({
+            style: {
+                head: ['green']
+            },
             head: ['Item ID', 'Product Name', 'Department Name', 'Price', 'Stock', 'Product Sales']
         });
         //Loop through response object, create array of values and push to table array
-        for (let index in response) {
+        for (let i in response) {
             let rowValues = [];
-            Object.keys(response[index]).forEach(item => {
-                rowValues.push(response[index][item]);
+            Object.keys(response[i]).forEach(item => {
+                rowValues.push(response[i][item]);
             });
             table.push(rowValues);
         }
