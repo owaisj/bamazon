@@ -24,8 +24,8 @@ const connection = mysql.createConnection({
                 'Add New Product'
             ]
         }
-    ]).then(function(response){
-        switch (response.operation) {
+    ]).then(r => {
+        switch (r.operation) {
             case 'View Products for Sale':
             return viewProducts();
             
@@ -123,7 +123,7 @@ function addNewItem() {
             name: 'quantity',
             message: 'How much do we have available to sell?'
         }
-    ]).then(function(newproduct){
+    ]).then(newproduct => {
         let newItemTable = new Table({
             style: {
                 head: ['green']
