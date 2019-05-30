@@ -36,9 +36,22 @@ To demonstrate the add product function, the manager adds 25 copies of World War
 ![Add new A](/screenshots/manager_add_new_A.png)  
 ![Add new B](/screenshots/manager_add_new_B.png)  
 ## Supervisor View
---Explain SQL queries  
---Screenshots of each method
-## Cli-Table Method
+To view total sales by deparment, the following query was used:  
+```sql
+SELECT departments.department_id, departments.department_name, departments.over_head_costs,
+    COALESCE(SUM(products.product_sales), 0) AS product_sales,
+    COALESCE(SUM(products.product_sales), 0) - over_head_costs AS total_profit
+FROM departments
+LEFT JOIN products
+ON departments.department_name = products.department_name
+GROUP BY departments.department_id
+ORDER BY total_profit DESC;
+```  
+This query takes the departments table (`LEFT`) and matches records from the products table (`RIGHT`) after finding the total sales for the products and getting the total sum for each department that has been created in the departments table (and thus has overhead costs) and is a part of product entries that have been sold. The `COALESCE` method is used so that `null` values are not added to the sum. The entries are ordered by descending profit so that the most profitable departments are on top.  
+This displays the following table:  
+![Sales by deparment](/screenshots/supervisor_total_sales.png)  
+Here the supervisor can add a new department  
+![new department](/screenshots/supervisor_new_d.png)
 ## Further Work
 - The sale output for customer could look like a receipt. 
 - Allow customers to make additional purchases until they decide to quit.
