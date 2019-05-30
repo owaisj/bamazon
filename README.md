@@ -22,12 +22,23 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 Here we see the customer successfully purchase 5 bags of goldfish.  
 ![Customer-Success](/screenshots/customer_success.png)  
 Here the customer tries to purchase 11 copies of The Stand when there are only 10 available.  
-![Customer-Insufficient](screenshots/customer_insufficient.png)
+![Customer-Insufficient](/screenshots/customer_insufficient.png)
 ## Manager View
---Screenshots of each method
+This portion of the application begins with an Immediately Invoked Function Expression (IIFE) that has an inquiry for the user to choose their action. Their choice is sent through a `switch-case` statement which returns a function corresponding to the selected action.  
+Here the manager can view all products that are for sale.  
+![View all products](/screenshots/manager_all.png)  
+Here the manager can view all products that have a stock quantity lower than 15 items.  
+![View low inventory](/screenshots/manager_low.png)  
+To demonstrate the add to inventory function, the manager will add 2 copies of JS Ninja to the stock.  
+![Add Inv A](/screenshots/manager_add_inv_A.png)  
+![Add Inv B](/screenshots/manager_add_inv_B.png)  
+To demonstrate the add product function, the manager adds 25 copies of World War Z to the table.  
+![Add new A](/screenshots/manager_add_new_A.png)  
+![Add new B](/screenshots/manager_add_new_B.png)  
 ## Supervisor View
 --Explain SQL queries  
 --Screenshots of each method
+## Cli-Table Method
 ## Further Work
 - The sale output for customer could look like a receipt. 
 - Allow customers to make additional purchases until they decide to quit.
